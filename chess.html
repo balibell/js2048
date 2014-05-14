@@ -1,0 +1,537 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="white">
+<title>堆糖</title>
+<script src="http://code.jquery.com/jquery-latest.js" ></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script>function aaa(s){
+/*merge start*/
+  if( typeof(console)==='object' && console.log ){
+    console.log(s)
+  }
+/*merge end*/
+}</script>
+</head>
+<body>
+<style>
+body,html{padding:0;margin:0;overflow:hidden;}
+
+.gameholder{zoom:1;margin:4em 0 10em 6em;font-family:tahoma,arial,sans-serif;font-size:13px;}
+.gameholder:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
+
+#gamepannel{position:relative;float:left;margin:6em 0 0 6em;}
+#gamepannel a{position:absolute;top:0;left:0;width:100px;height:40px;line-height:39px;text-align:center;background:blue;color:#fff;border-radius:8px;text-decoration:none !important;}
+#gamepannel a:link,
+#gamepannel a:visited{background:#22b4f6}
+#gamepannel a:hover{background:#1e9ed8}
+
+a#pannelup{left:100px;top:0;}
+a#pannelright{left:200px;top:40px;}
+a#panneldown{left:100px;top:80px;}
+a#pannelleft{left:0;top:40px;}
+
+#gamerange{border-radius:.5em;background-color:#baac9f}
+#gamerange div{text-align:center;font-weight:400;border-radius:8px}
+.qs-unit{z-index:1;line-height:1.5em;}
+
+/* scoreboard */
+.gameboard{zoom:1;}
+.gameboard:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
+
+.currentscore,
+.recordscore{float:left;margin:.5em .5em .5em 0;padding:0 1em .5em;background:#baac9f;border-radius:8px}
+.currentscore h3,
+.recordscore h3{padding:.5em 0 0;margin:0;line-height:1.5;text-align:center;font-size:1em;color:#e8ded2;}
+
+.scorefigure{text-align:center;font-size:1.8em;color:#fff;}
+
+
+
+@media screen and (max-width: 640px) {
+	.gameholder{width:320px;margin:0 auto;}
+	#gamepannel{display:none;}
+}
+</style>
+
+
+<div class="gameholder">
+	<div class="gameboard">
+		<div class="currentscore">
+			<h3>SCORE</h3>
+			<div id="gamescore" class="scorefigure">0</div>
+		</div>
+		
+		<div class="recordscore">
+			<h3>BEST</h3>
+			<div id="bestscore" class="scorefigure">0</div>
+		</div>
+	</div>
+	
+	
+	<div id="gamerange">
+		
+	</div>
+
+
+	<div id="gamepannel">
+		<a href="javascript:;" id="pannelup" data-dir="up">UP</a>
+		<a href="javascript:;" id="pannelright" data-dir="right">RIGHT</a>
+		<a href="javascript:;" id="panneldown" data-dir="down">DOWN</a>
+		<a href="javascript:;" id="pannelleft" data-dir="left">LEFT</a>
+	</div>
+
+</div>
+
+<script>
+$(function (){
+	var myQSB = new $.QSB('#gamerange',{"scoreboard":"#gamescore","bestscore":"#bestscore"})
+
+	$('#gamepannel').delegate('a','click',function (){
+		myQSB.move($(this).data('dir'))
+	})
+
+
+
+	$(window).keyup(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		switch(e.which){
+		case 37:$('#pannelleft').click();break;
+		case 38:$('#pannelup').click();break;
+		case 39:$('#pannelright').click();break;
+		case 40:$('#panneldown').click();break;
+		}
+	})
+})
+
+
+/*
+  @说明：QS 类chess
+  */
+$.QS = function ($cont,opts){
+  this.init($cont,opts);
+}
+
+$.QS.prototype = {
+	init : function ($cont,opts){
+		this.opts = $.extend({}, opts)
+    var t = this;
+    t.$dom = $($cont);
+
+    t.number = opts.number,
+    t.pos = opts.pos, // array
+    t.qssize = opts.qssize,
+    t.gap = opts.gap,
+    t.fontset = {
+    		"2":{"color":"#746c61","size":4,"background":"#ece4d9"},
+    		"4":{"color":"#756f63","size":4,"background":"#ece0c6"},
+    		"8":{"color":"#ffffff","size":4,"background":"#f2b179"},
+    		"16":{"color":"#ffffff","size":3.6,"background":"#f59562"},
+    		"32":{"color":"#ffffff","size":3.6,"background":"#f57c5f"},
+    		"64":{"color":"#ffffff","size":3.6,"background":"#f45e39"},
+    		"128":{"color":"#ffffff","size":2.8,"background":"#eccc5f"},
+    		"1024":{"color":"#ffffff","size":2.2,"background":"#eccc5f"}
+    }
+
+    t.setDomAttr();
+    t.setHtmlNumber();
+    t.setPos(t.pos,0);
+	},
+	setDomAttr : function (){
+		var t = this;
+		t.$dom.css({
+			"position" : "absolute",
+			"width" : t.qssize,
+			"height" : t.qssize
+		})
+	},
+	addNumber : function (number){
+		var t = this;
+		t.number += number;
+	},
+	setHtmlNumber : function (){
+		var t = this;
+		t.$dom.html(t.number);
+		t.setColor();
+	},
+	setPos : function (pos, dura, callback, params, qsb){
+		var t = this;
+		t.pos = pos // pos is an array
+
+		t.$dom.css("z-index",0).animate({
+			"top" : pos[0] * (t.qssize+t.gap) + t.gap,
+			"left" : pos[1] * (t.qssize+t.gap) + t.gap
+		},dura,function (){
+			t.$dom.css("z-index",1);
+			if($.isFunction(callback)){
+				callback.call(t,params,qsb)
+			}
+		})
+	},
+	add : function (qsb){
+		var t = this;
+		t.setHtmlNumber();
+
+
+		var $d = t.$dom,
+			top = $d.css("top"),
+			left = $d.css("left");
+
+		$d.effect("scale",{"percent":120,"easing":"easeOutCubic"},100,function (){
+			$d.css({
+				"top" : top,
+				"left" : left,
+				"transform" : "scale(1.2,1.2)"
+			})
+			.effect("scale",{"percent":82,"easing":"easeOutCubic"},100,function (){
+				$d.css({
+					"top" : top,
+					"left" : left,
+					"transform" : "scale(1,1)"
+				})
+			})
+		})
+
+
+	},
+	remove : function (){
+		var t = this;
+		t.number = 0;
+		t.$dom.remove();
+	},
+	setColor : function (){
+		var t = this,
+			grade = t.number;
+
+		if( t.number >= 1024  ){
+			grade = "1024"
+		}else if( t.number >= 128 ){
+			grade = "128"
+		}
+
+		// aaa('errror grade:' + grade)
+		var font = t.fontset[grade]
+		t.$dom.css({
+			"line-height" : 6/font.size + "em",
+			"font-size" : font.size*.8 + "em",
+			"background" : font.background,
+			"color" : font.color
+		})
+	}
+}
+
+/*
+  @说明：QSB 类chess board
+  */
+$.QSB = function ($cont,opts){
+  this.init($cont,opts);
+}
+
+$.QSB.prototype = {
+	init : function ($cont,opts){
+		this.opts = $.extend({}, opts)
+    var t = this;
+    t.$dom = $($cont);
+
+    t.dim = opts.dim || 4,
+		t.initcout = opts.initcout || 2, // chess count when init
+		t.gap = opts.gap || 15, // space between chess 
+		t.dura = opts.gap || 100, // duration of animation
+		t.qssize = 61, // chess size
+    t.diminfo = [],
+    t.maxcount = t.dim * t.dim,
+    t.score = 0,
+    t.$scoreboard = $(opts.scoreboard),
+    t.$bestscore = $(opts.bestscore),
+    t.storage = t.getStorage(),
+    t.ismoving = 0,
+    t.movtimer;
+
+    // set best score
+    t.setBestScore();
+
+
+    for(var i=0; i<t.dim; i++){
+    	var inn = []
+    	for(var j=0; j<t.dim; j++){
+    		inn.push({"posX":i,"posY":j,"qs":null})
+
+    		var $cell = $('<div class="qs-cell"></div>').css({
+    			"position" : "absolute",
+					"width" : t.qssize,
+					"height" : t.qssize,
+					"top" : i * (t.qssize+t.gap) + t.gap,
+					"left" : j * (t.qssize+t.gap) + t.gap,
+					"background" : "#ccc0b2"
+    		})
+    		t.$dom.append($cell);
+    	}
+    	t.diminfo.push(inn)
+    }
+
+
+    // existed chesses on the qs board
+    for(var i=0; i<t.initcout; i++){
+    	t.generateQS();
+    }
+
+    var wh = (t.gap + t.qssize ) * t.dim + t.gap
+    t.$dom.css({
+    	"position" : "relative",
+    	"float" : "left",
+    	"width" : wh,
+    	"height" : wh
+    })
+
+	},
+
+	randomPos : function (){
+		var t = this,
+			blank = [];
+		for(var i=0; i<t.dim; i++){
+			for(var j=0; j<t.dim; j++){
+				if( !t.diminfo[i][j].qs ){
+					blank.push([i,j])
+				}
+			}
+		}
+
+		if( !blank.length ){
+			// if there is no blank
+			return null;
+		}
+
+
+		var randidx = Math.floor(blank.length * Math.random());
+		return blank[randidx]
+	},
+	randomNumber : function (){
+		return 2*(Math.round(Math.random()*Math.random()) + 1)
+	},
+	generateQS : function (pos,number){
+		var t = this,
+			qs = null,
+			rpos = t.randomPos();
+
+		if( rpos ){
+  		var info = t.diminfo[rpos[0]][rpos[1]];
+    	var qs = new $.QS($('<div class="qs-unit"></div>'),{number:t.randomNumber(),pos:rpos,qssize:t.qssize,gap:t.gap});
+    	info.qs = qs;
+
+    	t.$dom.append(qs.$dom.css("display","none"));
+    	qs.$dom.show("scale",{"percent":"100"},200);
+		}
+
+		return qs;
+	},
+	scoreAdd : function (number){
+		var t = this;
+		t.score += number;
+		t.$scoreboard.html(t.score);
+		return t.score;
+	},
+	move : function (dir){
+		var t = this;
+		aaa('---------------ismoving:'+t.ismoving)
+		if( t.ismoving ){
+			aaa('-----------return return');
+			return
+		}
+
+		t.ismoving = 1;
+
+		// value of dir among   "up"  "down" "left" "right"
+		var info = t.diminfo,
+			hasmoved = false;
+
+		for(var i=0; i<t.dim-1; i++){
+			for(var j=0; j<t.dim; j++){
+				var stp = 1,
+					ui = i,
+					uj = j,
+					us = i;
+
+				switch( dir ){
+					case "up" : 
+						// up
+						break;
+					case "down" :
+						// down
+						stp = -1,
+						ui = t.dim - 1 -i,
+						us = ui;
+						break;
+					case "left" :
+						// left
+						ui = j,
+						uj = i,
+						us = uj;
+						break;
+					case "right" :
+						// right
+						stp = -1,
+						uj = t.dim - 1 - i,
+						ui = j,
+						us = uj;			
+						break
+					default :
+						// default
+				}
+
+
+				// if cell is empty
+				if( !info[ui][uj].qs ){
+					var lev = 0,
+						headqs;
+					// search for the nearest unit along the direction
+					for(var k=us+stp; 0<=k && k<t.dim; k+=stp){
+						var uk = k,
+							ux = uj;
+
+						if( dir == "left" || dir == "right" ){
+							uk = ui;
+							ux = k;
+						}
+						if( info[uk][ux].qs ){
+							lev++;
+
+							if( lev == 1){
+								hasmoved = true;
+								info[ui][uj].qs = info[uk][ux].qs,
+								info[uk][ux].qs = null;
+
+								++t.ismoving;
+								info[ui][uj].qs.setPos([ui,uj],t.dura,function (params,qsb){
+									qsb.ismoving--;
+								},[],t),
+								headqs = info[ui][uj].qs;
+							}else if( lev == 2 ){
+
+								if( info[uk][ux].qs.number == headqs.number ){
+									t.scoreAdd(headqs.number+info[uk][ux].qs.number);
+
+									headqs.addNumber(info[uk][ux].qs.number);
+									++t.ismoving;
+									info[uk][ux].qs.setPos([ui,uj],t.dura,function (params,qsb){
+										qsb.ismoving--;
+										params[0].add(qsb);
+										this.remove();
+									},[headqs],t);
+									info[uk][ux].qs = null;
+
+								}
+								break;
+							}
+						}
+					}
+				}else{
+
+					// search for the nearest unit along the direction
+					for(var k=us+stp; 0<=k && k<t.dim; k+=stp){
+						var uk = k,
+							ux = uj;
+
+						if( dir == "left" || dir == "right" ){
+							uk = ui;
+							ux = k;
+						}
+
+						var closqs = info[uk][ux].qs;
+						if( closqs ){
+							if( closqs.number == info[ui][uj].qs.number ){
+								hasmoved = true;
+
+								t.scoreAdd(info[ui][uj].qs.number+info[uk][ux].qs.number);
+
+
+								info[ui][uj].qs.addNumber(info[uk][ux].qs.number);
+								++t.ismoving;
+								info[uk][ux].qs.setPos([ui,uj],t.dura,function (params,qsb){
+									qsb.ismoving--;
+									params[0].add(qsb);
+									this.remove();
+								},[info[ui][uj].qs],t);
+								info[uk][ux].qs = null;
+							}
+
+							break;
+						}
+					}
+				}
+			}
+		}
+		// move over then generate new unit
+		if( hasmoved ){
+			window.setTimeout(function (){
+				t.generateQS();
+			},1.3*t.dura)
+		}else{
+				// if no empty pos can be found, then judge whether game over or not
+			if( !t.randomPos() && t.isGameOver() ){
+				t.gameOver()
+			}
+		}
+		t.movtimer = window.setTimeout(function (){
+			t.ismoving--;
+		},2.3*t.dura)
+	},
+	getSavedScore : function (){
+		var t = this;
+		if(t.storage){
+			return  t.storage.getItem("qsbestscore");
+		}
+		return null;
+	},
+	setBestScore : function (score){
+		var t = this,
+			sc = score || 0,
+			savesc = t.getSavedScore();  // null when storage is unavailable
+
+		if( savesc && (!sc || sc < savesc) ){
+			sc = savesc;
+		}
+
+		if( t.storage && (!savesc || savesc < sc) ){
+			t.storage.setItem("qsbestscore",sc);
+		}
+		t.$bestscore.html(sc)
+	},
+	getStorage : function (){
+		// try is necessary in case of localStorage has been banned
+		var localStorage;
+		try{
+		  localStorage = window.localStorage
+		}catch(e){
+		  
+		}
+		// whether localStorage can be used or not
+		if( !!(typeof localStorage != 'undefined' && localStorage) ){
+			return localStorage;
+		}
+		return null
+	},
+
+
+	isGameOver : function (){
+		return true;
+	},
+
+	gameOver : function (){
+		var t = this;
+
+		t.setBestScore(t.score);
+	}
+
+}
+
+
+
+</script>
+</body>
+</html>
+
