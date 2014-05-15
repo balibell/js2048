@@ -7,8 +7,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="white">
 <title>堆糖</title>
-<script src="http://code.jquery.com/jquery-latest.js" ></script>
-<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script src="http://zeptojs.com/zepto.js" ></script>
+<script src="http://www.duitang.com/app/woo/js/zepto/fx.js" ></script>
+<script src="http://www.duitang.com/app/woo/js/zepto/fx_methods.js" ></script>
+<script src="http://www.duitang.com/app/woo/js/zepto/touch.js" ></script>
 <script>function aaa(s){
 /*merge start*/
   if( typeof(console)==='object' && console.log ){
@@ -19,9 +21,9 @@
 </head>
 <body>
 <style>
-body,html{padding:0;margin:0;overflow:hidden;}
+body,html{padding:0;margin:0;}
 
-.gameholder{zoom:1;margin:4em 0 10em 6em;font-family:tahoma,arial,sans-serif;font-size:13px;}
+.gameholder{zoom:1;margin:4em 0 4em 6em;font-family:tahoma,arial,sans-serif;font-size:13px;}
 .gameholder:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
 
 #gamepannel{position:relative;float:left;margin:6em 0 0 6em;}
@@ -37,7 +39,59 @@ a#pannelleft{left:0;top:40px;}
 
 #gamerange{border-radius:.5em;background-color:#baac9f}
 #gamerange div{text-align:center;font-weight:400;border-radius:8px}
-.qs-unit{z-index:1;line-height:1.5em;}
+.qs-unit{z-index:1;line-height:1.5em;
+	transition: transform .1s ease-in-out;
+	-webkit-transition: -webkit-transform .1s ease-in-out;
+	-moz-transition: -moz-transform .1s ease-in-out;
+	-o-transition: -o-transform .1s ease-in-out;
+}
+.qs-unit-init{
+	-webkit-transform: scale(0.0);
+	-moz-transform: scale(0.0);
+	-o-transform: scale(0.0);
+	transform: scale(0.0);
+}
+.qs-unit-merge{
+	-webkit-animation-name:elasticpop;
+	-moz-animation-name:elasticpop;
+	animation-name:elasticpop;
+
+	-webkit-animation-duration:.2s;
+	-moz-animation-duration:.2s;
+	-ms-animation-duration:.2s;
+	-o-animation-duration:.2s;
+	animation-duration:.2s;
+
+
+	-webkit-animation-timing-function:ease;
+	-moz-animation-timing-function:ease;
+	animation-timing-function:ease;
+
+
+	-webkit-animation-iteration-count:1;
+	-moz-animation-iteration-count:1;
+	animation-iteration-count:1;
+}
+
+@-webkit-keyframes elasticpop{
+	0%     {-webkit-transform:scale(1,1);}
+	5% 		 {-webkit-transform:scale(.8,.8);}
+	45%    {-webkit-transform:scale(1.2,1.2);}
+	100%   {-webkit-transform:scale(1,1);}
+}
+@-moz-keyframes elasticpop{
+	0%     {-webkit-transform:scale(1,1);}
+	5% 		 {-webkit-transform:scale(.8,.8);}
+	45%    {-webkit-transform:scale(1.2,1.2);}
+	100%   {-webkit-transform:scale(1,1);}
+}
+@keyframes elasticpop{
+	0%     {-webkit-transform:scale(1,1);}
+	5% 		 {-webkit-transform:scale(.8,.8);}
+	45%    {-webkit-transform:scale(1.2,1.2);}
+	100%   {-webkit-transform:scale(1,1);}
+}
+
 
 /* scoreboard */
 .gameboard{zoom:1;}
@@ -101,11 +155,26 @@ $(function (){
 		e.preventDefault();
 		e.stopPropagation();
 		switch(e.which){
-		case 37:$('#pannelleft').click();break;
-		case 38:$('#pannelup').click();break;
-		case 39:$('#pannelright').click();break;
-		case 40:$('#panneldown').click();break;
+		case 37 : myQSB.move('left');break;
+		case 38 : myQSB.move('up');break;
+		case 39 : myQSB.move('right');break;
+		case 40 : myQSB.move('down');break;
 		}
+	})
+
+
+
+	$('body').swipeUp(function (){
+		myQSB.move('up')
+	})
+	$('body').swipeDown(function (){
+		myQSB.move('down')
+	})
+	$('body').swipeLeft(function (){
+		myQSB.move('left')
+	})
+	$('body').swipeRight(function (){
+		myQSB.move('right')
 	})
 })
 
@@ -131,9 +200,9 @@ $.QS.prototype = {
     		"2":{"color":"#746c61","size":4,"background":"#ece4d9"},
     		"4":{"color":"#756f63","size":4,"background":"#ece0c6"},
     		"8":{"color":"#ffffff","size":4,"background":"#f2b179"},
-    		"16":{"color":"#ffffff","size":3.6,"background":"#f59562"},
-    		"32":{"color":"#ffffff","size":3.6,"background":"#f57c5f"},
-    		"64":{"color":"#ffffff","size":3.6,"background":"#f45e39"},
+    		"16":{"color":"#ffffff","size":3.5,"background":"#f59562"},
+    		"32":{"color":"#ffffff","size":3.5,"background":"#f57c5f"},
+    		"64":{"color":"#ffffff","size":3.5,"background":"#f45e39"},
     		"128":{"color":"#ffffff","size":2.8,"background":"#eccc5f"},
     		"1024":{"color":"#ffffff","size":2.2,"background":"#eccc5f"}
     }
@@ -173,30 +242,35 @@ $.QS.prototype = {
 			}
 		})
 	},
-	add : function (qsb){
-		var t = this;
+	merge : function (qsb){
+		var t = this,
+			$d = t.$dom;
 		t.setHtmlNumber();
 
+		$d.addClass('qs-unit-merge')
 
-		var $d = t.$dom,
-			top = $d.css("top"),
-			left = $d.css("left");
+		setTimeout(function (){
+			$d.removeClass('qs-unit-merge')
+		},200)
 
-		$d.effect("scale",{"percent":120,"easing":"easeOutCubic"},100,function (){
-			$d.css({
-				"top" : top,
-				"left" : left,
-				"transform" : "scale(1.2,1.2)"
-			})
-			.effect("scale",{"percent":82,"easing":"easeOutCubic"},100,function (){
-				$d.css({
-					"top" : top,
-					"left" : left,
-					"transform" : "scale(1,1)"
-				})
-			})
-		})
 
+		// var $d = t.$dom,
+		// 	top = $d.css("top"),
+		// 	left = $d.css("left");
+		// $d.effect("scale",{"percent":120,"easing":"easeOutCubic"},100,function (){
+		// 	$d.css({
+		// 		"top" : top,
+		// 		"left" : left,
+		// 		"transform" : "scale(1.2,1.2)"
+		// 	})
+		// 	.effect("scale",{"percent":82,"easing":"easeOutCubic"},100,function (){
+		// 		$d.css({
+		// 			"top" : top,
+		// 			"left" : left,
+		// 			"transform" : "scale(1,1)"
+		// 		})
+		// 	})
+		// })
 
 	},
 	remove : function (){
@@ -214,7 +288,6 @@ $.QS.prototype = {
 			grade = "128"
 		}
 
-		// aaa('errror grade:' + grade)
 		var font = t.fontset[grade]
 		t.$dom.css({
 			"line-height" : 6/font.size + "em",
@@ -320,11 +393,14 @@ $.QSB.prototype = {
 
 		if( rpos ){
   		var info = t.diminfo[rpos[0]][rpos[1]];
-    	var qs = new $.QS($('<div class="qs-unit"></div>'),{number:t.randomNumber(),pos:rpos,qssize:t.qssize,gap:t.gap});
+    	var qs = new $.QS($('<div class="qs-unit qs-unit-init"></div>'),{number:t.randomNumber(),pos:rpos,qssize:t.qssize,gap:t.gap});
     	info.qs = qs;
 
-    	t.$dom.append(qs.$dom.css("display","none"));
-    	qs.$dom.show("scale",{"percent":"100"},200);
+    	t.$dom.append(qs.$dom);
+			window.setTimeout(function (){
+				 qs.$dom.removeClass('qs-unit-init');
+			},10)
+
 		}
 
 		return qs;
@@ -335,15 +411,15 @@ $.QSB.prototype = {
 		t.$scoreboard.html(t.score);
 		return t.score;
 	},
-	move : function (dir){
+	move : function (dir,trytomove){
 		var t = this;
-		aaa('---------------ismoving:'+t.ismoving)
-		if( t.ismoving ){
-			aaa('-----------return return');
+		if( t.ismoving && !trytomove ){
 			return
 		}
 
-		t.ismoving = 1;
+		if( !trytomove ){
+			t.ismoving = 1;
+		}
 
 		// value of dir among   "up"  "down" "left" "right"
 		var info = t.diminfo,
@@ -400,29 +476,35 @@ $.QSB.prototype = {
 						if( info[uk][ux].qs ){
 							lev++;
 
-							if( lev == 1){
+							if( lev == 1 ){
 								hasmoved = true;
-								info[ui][uj].qs = info[uk][ux].qs,
-								info[uk][ux].qs = null;
 
-								++t.ismoving;
-								info[ui][uj].qs.setPos([ui,uj],t.dura,function (params,qsb){
-									qsb.ismoving--;
-								},[],t),
-								headqs = info[ui][uj].qs;
+								if(	!trytomove ){
+									info[ui][uj].qs = info[uk][ux].qs,
+									info[uk][ux].qs = null;
+
+									++t.ismoving;
+									info[ui][uj].qs.setPos([ui,uj],t.dura,function (params,qsb){
+										qsb.ismoving--;
+									},[],t),
+									headqs = info[ui][uj].qs;
+								}
 							}else if( lev == 2 ){
 
 								if( info[uk][ux].qs.number == headqs.number ){
 									t.scoreAdd(headqs.number+info[uk][ux].qs.number);
+									hasmoved = true;
 
-									headqs.addNumber(info[uk][ux].qs.number);
-									++t.ismoving;
-									info[uk][ux].qs.setPos([ui,uj],t.dura,function (params,qsb){
-										qsb.ismoving--;
-										params[0].add(qsb);
-										this.remove();
-									},[headqs],t);
-									info[uk][ux].qs = null;
+									if(	!trytomove ){
+										headqs.addNumber(info[uk][ux].qs.number);
+										++t.ismoving;
+										info[uk][ux].qs.setPos([ui,uj],t.dura,function (params,qsb){
+											qsb.ismoving--;
+											params[0].merge(qsb);
+											this.remove();
+										},[headqs],t);
+										info[uk][ux].qs = null;
+									}
 
 								}
 								break;
@@ -446,17 +528,17 @@ $.QSB.prototype = {
 							if( closqs.number == info[ui][uj].qs.number ){
 								hasmoved = true;
 
-								t.scoreAdd(info[ui][uj].qs.number+info[uk][ux].qs.number);
-
-
-								info[ui][uj].qs.addNumber(info[uk][ux].qs.number);
-								++t.ismoving;
-								info[uk][ux].qs.setPos([ui,uj],t.dura,function (params,qsb){
-									qsb.ismoving--;
-									params[0].add(qsb);
-									this.remove();
-								},[info[ui][uj].qs],t);
-								info[uk][ux].qs = null;
+								if( !trytomove ){
+									t.scoreAdd(info[ui][uj].qs.number+info[uk][ux].qs.number);
+									info[ui][uj].qs.addNumber(info[uk][ux].qs.number);
+									++t.ismoving;
+									info[uk][ux].qs.setPos([ui,uj],t.dura,function (params,qsb){
+										qsb.ismoving--;
+										params[0].merge(qsb);
+										this.remove();
+									},[info[ui][uj].qs],t);
+									info[uk][ux].qs = null;
+								}
 							}
 
 							break;
@@ -465,20 +547,25 @@ $.QSB.prototype = {
 				}
 			}
 		}
-		// move over then generate new unit
-		if( hasmoved ){
-			window.setTimeout(function (){
-				t.generateQS();
-			},1.3*t.dura)
-		}else{
-				// if no empty pos can be found, then judge whether game over or not
-			if( !t.randomPos() && t.isGameOver() ){
-				t.gameOver()
+
+		if( !trytomove ){
+			// move over then generate new unit
+			if( hasmoved ){
+				window.setTimeout(function (){
+					t.generateQS();
+				},1.3*t.dura)
+			}else{
+					// if no empty pos can be found, then judge whether game over or not
+				if( !t.randomPos() && t.isGameOver() ){
+					t.gameOver()
+				}
 			}
+			t.movtimer = window.setTimeout(function (){
+				t.ismoving--;
+			},1.5*t.dura)
 		}
-		t.movtimer = window.setTimeout(function (){
-			t.ismoving--;
-		},2.3*t.dura)
+
+		return hasmoved;
 	},
 	getSavedScore : function (){
 		var t = this;
@@ -518,12 +605,23 @@ $.QSB.prototype = {
 
 
 	isGameOver : function (){
-		return true;
+		var t = this,
+			haspos = false,
+			direc = ["up","down","left","right"];
+
+		for(var i=0; i<direc.length; i++){
+			// the second param means try to move but not really move
+			haspos = t.move(direc[i],true);
+			if( haspos ){
+				break;
+			}
+		}
+		return !haspos;
 	},
 
 	gameOver : function (){
 		var t = this;
-
+		alert('game over!')
 		t.setBestScore(t.score);
 	}
 
