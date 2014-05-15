@@ -21,10 +21,15 @@
 </head>
 <body>
 <style>
-body,html{padding:0;margin:0;}
+body,html{padding:0;margin:0;
+-moz-user-select: none;
+-khtml-user-select: none;
+user-select: none;
+font-size:13px;
+}
 
-.gameholder{zoom:1;margin:4em 0 4em 6em;font-family:tahoma,arial,sans-serif;font-size:13px;}
-.gameholder:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
+#gameholder{zoom:1;margin:4em 0 4em 6em;font-family:tahoma,arial,sans-serif;}
+#gameholder:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
 
 #gamepannel{position:relative;float:left;margin:6em 0 0 6em;}
 #gamepannel a{position:absolute;top:0;left:0;width:100px;height:40px;line-height:39px;text-align:center;background:blue;color:#fff;border-radius:8px;text-decoration:none !important;}
@@ -41,15 +46,15 @@ a#pannelleft{left:0;top:40px;}
 #gamerange div{text-align:center;font-weight:400;border-radius:8px}
 .qs-unit{z-index:1;line-height:1.5em;
 	transition: transform .1s ease-in-out;
-	-webkit-transition: -webkit-transform .1s ease-in-out;
-	-moz-transition: -moz-transform .1s ease-in-out;
-	-o-transition: -o-transform .1s ease-in-out;
+	-webkit-transition: -webkit-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
+	-moz-transition: -moz-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
+	-o-transition: -o-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
 }
 .qs-unit-init{
-	-webkit-transform: scale(0.0);
-	-moz-transform: scale(0.0);
-	-o-transform: scale(0.0);
-	transform: scale(0.0);
+	-webkit-transform: scale3d(0,0,0);
+	-moz-transform: scale3d(0,0,0);
+	-o-transform: scale3d(0,0,0);
+	transform: scale3d(0,0,0);
 }
 .qs-unit-merge{
 	-webkit-animation-name:elasticpop;
@@ -74,22 +79,22 @@ a#pannelleft{left:0;top:40px;}
 }
 
 @-webkit-keyframes elasticpop{
-	0%     {-webkit-transform:scale(1,1);}
-	5% 		 {-webkit-transform:scale(.8,.8);}
-	45%    {-webkit-transform:scale(1.2,1.2);}
-	100%   {-webkit-transform:scale(1,1);}
+	0%     {-webkit-transform:scale3d(1,1,1);}
+	5% 		 {-webkit-transform:scale3d(.8,.8,1);}
+	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
+	100%   {-webkit-transform:scale3d(1,1,1);}
 }
 @-moz-keyframes elasticpop{
-	0%     {-webkit-transform:scale(1,1);}
-	5% 		 {-webkit-transform:scale(.8,.8);}
-	45%    {-webkit-transform:scale(1.2,1.2);}
-	100%   {-webkit-transform:scale(1,1);}
+	0%     {-webkit-transform:scale3d(1,1,1);}
+	5% 		 {-webkit-transform:scale3d(.8,.8,1);}
+	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
+	100%   {-webkit-transform:scale3d(1,1,1);}
 }
 @keyframes elasticpop{
-	0%     {-webkit-transform:scale(1,1);}
-	5% 		 {-webkit-transform:scale(.8,.8);}
-	45%    {-webkit-transform:scale(1.2,1.2);}
-	100%   {-webkit-transform:scale(1,1);}
+	0%     {-webkit-transform:scale3d(1,1,1);}
+	5% 		 {-webkit-transform:scale3d(.8,.8,1);}
+	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
+	100%   {-webkit-transform:scale3d(1,1,1);}
 }
 
 
@@ -104,18 +109,17 @@ a#pannelleft{left:0;top:40px;}
 
 .scorefigure{text-align:center;font-size:1.8em;color:#fff;}
 
-#gameover{display:none;position:fixed;z-index:9999;top:0;left:0;width:100%;height:100%;line-height:2em;text-align:center;background-color:rgba(200,200,200,.7);color:#fff;font-weight:800;}
-#gameover h3{font-size:2em}
+#gameover{display:none;position:fixed;z-index:9999;top:0;left:0;width:100%;height:100%;padding:2em 0 0;line-height:2em;text-align:center;background-color:rgba(200,200,200,.7);color:#fff;font-weight:800;}
+#gameover div{font-size:2em;}
 #gameover p{font-size:1em}
 
 @media screen and (max-width: 640px) {
-	.gameholder{width:320px;margin:0 auto;}
+	#gameholder{width:320px;margin:0 auto;}
 	#gamepannel{display:none;}
 }
 </style>
 
-
-<div class="gameholder">
+<div id="gameholder">
 	<div class="gameboard">
 		<div class="currentscore">
 			<h3>SCORE</h3>
@@ -142,9 +146,15 @@ a#pannelleft{left:0;top:40px;}
 	</div>
 
 </div>
-<div id="gameover"><h3>Game over!</h3> <p>Click to try again</p></div>
+<div id="gameover"><div>Game over!</div> <p>Click to try again</p></div>
 
 <script>
+$(document).on('touchmove',function (e){
+	e.preventDefault();
+	e.stopPropagation();
+})
+
+
 $(function (){
 	var myQSB = new $.QSB('#gamerange',{"scoreboard":"#gamescore","bestscore":"#bestscore","gameover":"#gameover"})
 
@@ -167,16 +177,24 @@ $(function (){
 
 
 
-	$('body').swipeUp(function (){
+	$('#gamerange').swipeUp(function (e){
+		e.preventDefault();
+		e.stopPropagation();
 		myQSB.move('up')
 	})
-	$('body').swipeDown(function (){
+	.swipeDown(function (e){
+		e.preventDefault();
+		e.stopPropagation();
 		myQSB.move('down')
 	})
-	$('body').swipeLeft(function (){
+	.swipeLeft(function (e){
+		e.preventDefault();
+		e.stopPropagation();
 		myQSB.move('left')
 	})
-	$('body').swipeRight(function (){
+	.swipeRight(function (e){
+		e.preventDefault();
+		e.stopPropagation();
 		myQSB.move('right')
 	})
 })
@@ -235,7 +253,7 @@ $.QS.prototype = {
 		var t = this;
 		t.pos = pos // pos is an array
 
-		t.$dom.css("z-index",0).animate({
+		t.$dom.css("z-index",0).css({
 			"top" : pos[0] * (t.qssize+t.gap) + t.gap,
 			"left" : pos[1] * (t.qssize+t.gap) + t.gap
 		},dura,function (){
@@ -244,6 +262,15 @@ $.QS.prototype = {
 				callback.call(t,params,qsb)
 			}
 		})
+
+		window.setTimeout(function (){
+			t.$dom.css("z-index",1);
+			if($.isFunction(callback)){
+				callback.call(t,params,qsb)
+			}
+		},dura)
+
+
 	},
 	merge : function (qsb){
 		var t = this,
