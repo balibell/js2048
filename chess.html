@@ -28,7 +28,12 @@ user-select: none;
 font-size:13px;
 }
 
-#gameholder{zoom:1;margin:4em 0 4em 6em;font-family:tahoma,arial,sans-serif;}
+.gogithub{padding:1em 0 0 1em;}
+.gogithub a:link,
+.gogithub a:visited{text-decoration:none;font-size:2em;color:#444}
+.gogithub a:hover{text-decoration:underline;color:#444}
+
+#gameholder{zoom:1;margin:2em 0 4em 6em;font-family:tahoma,arial,sans-serif;}
 #gameholder:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
 
 #gamepannel{position:relative;float:left;margin:6em 0 0 6em;}
@@ -114,10 +119,13 @@ a#pannelleft{left:0;top:40px;}
 #gameover p{font-size:1em}
 
 @media screen and (max-width: 640px) {
+	.gogithub{display:none;}
 	#gameholder{width:320px;margin:0 auto;}
 	#gamepannel{display:none;}
 }
 </style>
+
+<div class="gogithub"><a href="https://github.com/balibell/js2048" target="_blank">Github</a></div>
 
 <div id="gameholder">
 	<div class="gameboard">
