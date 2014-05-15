@@ -104,7 +104,9 @@ a#pannelleft{left:0;top:40px;}
 
 .scorefigure{text-align:center;font-size:1.8em;color:#fff;}
 
-
+#gameover{display:none;position:fixed;z-index:9999;top:0;left:0;width:100%;height:100%;line-height:2em;text-align:center;background-color:rgba(200,200,200,.7);color:#fff;font-weight:800;}
+#gameover h3{font-size:2em}
+#gameover p{font-size:1em}
 
 @media screen and (max-width: 640px) {
 	.gameholder{width:320px;margin:0 auto;}
@@ -140,10 +142,11 @@ a#pannelleft{left:0;top:40px;}
 	</div>
 
 </div>
+<div id="gameover"><h3>Game over!</h3> <p>Click to try again</p></div>
 
 <script>
 $(function (){
-	var myQSB = new $.QSB('#gamerange',{"scoreboard":"#gamescore","bestscore":"#bestscore"})
+	var myQSB = new $.QSB('#gamerange',{"scoreboard":"#gamescore","bestscore":"#bestscore","gameover":"#gameover"})
 
 	$('#gamepannel').delegate('a','click',function (){
 		myQSB.move($(this).data('dir'))
@@ -253,25 +256,6 @@ $.QS.prototype = {
 			$d.removeClass('qs-unit-merge')
 		},200)
 
-
-		// var $d = t.$dom,
-		// 	top = $d.css("top"),
-		// 	left = $d.css("left");
-		// $d.effect("scale",{"percent":120,"easing":"easeOutCubic"},100,function (){
-		// 	$d.css({
-		// 		"top" : top,
-		// 		"left" : left,
-		// 		"transform" : "scale(1.2,1.2)"
-		// 	})
-		// 	.effect("scale",{"percent":82,"easing":"easeOutCubic"},100,function (){
-		// 		$d.css({
-		// 			"top" : top,
-		// 			"left" : left,
-		// 			"transform" : "scale(1,1)"
-		// 		})
-		// 	})
-		// })
-
 	},
 	remove : function (){
 		var t = this;
@@ -321,6 +305,7 @@ $.QSB.prototype = {
     t.score = 0,
     t.$scoreboard = $(opts.scoreboard),
     t.$bestscore = $(opts.bestscore),
+    t.$gameover = $(opts.gameover),
     t.storage = t.getStorage(),
     t.ismoving = 0,
     t.movtimer;
@@ -621,7 +606,15 @@ $.QSB.prototype = {
 
 	gameOver : function (){
 		var t = this;
-		alert('game over!')
+		t.$gameover
+		.unbind('click')
+		.bind('click',function (){
+			t.$gameover.hide()
+
+			t.$dom.empty()
+			t.init(t.$dom,t.opts)
+		})
+		.show();
 		t.setBestScore(t.score);
 	}
 
