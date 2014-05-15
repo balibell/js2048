@@ -1,5 +1,5 @@
-# 2048 in html #
-This is a 2048 game written with javascript and html.
+# 2048 in html mobile #
+This is a 2048 game written with javascript and html. You can play it with your phone.
 
 
 version: 1.0.1
@@ -14,3 +14,4 @@ version: 1.0.1
  * repalce zepto animate with css3 transition
  * prevent document touchstart to avoid over scroll in ios
  * set user-select none
+ * optimize in mobile
