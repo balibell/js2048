@@ -10,7 +10,7 @@ version: 1.0.1
 
 ## Change Log
 
-* **1.0.1** 2013-10-14
+* **1.0.1** 2014-5-15
  * repalce zepto animate with css3 transition
  * prevent document touchstart to avoid over scroll in ios
  * set user-select none
