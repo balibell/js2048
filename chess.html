@@ -7,207 +7,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="white">
 <title>堆糖</title>
-<script src="http://zeptojs.com/zepto.js" ></script>
+<script src="http://www.duitang.com/app/woo/js/zepto/zepto.js" ></script>
+<script src="http://www.duitang.com/app/woo/js/zepto/event.js" ></script>
+<script src="http://www.duitang.com/app/woo/js/zepto/ie.js" ></script>
 <script src="http://www.duitang.com/app/woo/js/zepto/fx.js" ></script>
 <script src="http://www.duitang.com/app/woo/js/zepto/fx_methods.js" ></script>
 <script src="http://www.duitang.com/app/woo/js/zepto/touch.js" ></script>
-<script>function aaa(s){
-/*merge start*/
-  if( typeof(console)==='object' && console.log ){
-    console.log(s)
-  }
-/*merge end*/
-}</script>
-</head>
-<body>
-<style>
-body,html{padding:0;margin:0;
--moz-user-select: none;
--khtml-user-select: none;
-user-select: none;
-font-size:13px;
-}
-
-.gogithub{padding:1em 0 0 1em;}
-.gogithub a:link,
-.gogithub a:visited{text-decoration:none;font-size:2em;color:#444}
-.gogithub a:hover{text-decoration:underline;color:#444}
-
-#gameholder{zoom:1;margin:2em 0 4em 6em;font-family:tahoma,arial,sans-serif;}
-#gameholder:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
-
-#gamepannel{position:relative;float:left;margin:6em 0 0 6em;}
-#gamepannel a{position:absolute;top:0;left:0;width:100px;height:40px;line-height:39px;text-align:center;background:blue;color:#fff;border-radius:8px;text-decoration:none !important;}
-#gamepannel a:link,
-#gamepannel a:visited{background:#22b4f6}
-#gamepannel a:hover{background:#1e9ed8}
-
-a#pannelup{left:100px;top:0;}
-a#pannelright{left:200px;top:40px;}
-a#panneldown{left:100px;top:80px;}
-a#pannelleft{left:0;top:40px;}
-
-#gamerange{border-radius:.5em;background-color:#baac9f}
-#gamerange div{text-align:center;font-weight:400;border-radius:8px}
-.qs-unit{z-index:1;line-height:1.5em;
-	transition: transform .1s ease-in-out;
-	-webkit-transition: -webkit-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
-	-moz-transition: -moz-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
-	-o-transition: -o-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
-}
-.qs-unit-init{
-	-webkit-transform: scale3d(0,0,0);
-	-moz-transform: scale3d(0,0,0);
-	-o-transform: scale3d(0,0,0);
-	transform: scale3d(0,0,0);
-}
-.qs-unit-merge{
-	-webkit-animation-name:elasticpop;
-	-moz-animation-name:elasticpop;
-	animation-name:elasticpop;
-
-	-webkit-animation-duration:.2s;
-	-moz-animation-duration:.2s;
-	-ms-animation-duration:.2s;
-	-o-animation-duration:.2s;
-	animation-duration:.2s;
-
-
-	-webkit-animation-timing-function:ease;
-	-moz-animation-timing-function:ease;
-	animation-timing-function:ease;
-
-
-	-webkit-animation-iteration-count:1;
-	-moz-animation-iteration-count:1;
-	animation-iteration-count:1;
-}
-
-@-webkit-keyframes elasticpop{
-	0%     {-webkit-transform:scale3d(1,1,1);}
-	/*5% 		 {-webkit-transform:scale3d(.8,.8,1);}*/
-	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
-	100%   {-webkit-transform:scale3d(1,1,1);}
-}
-@-moz-keyframes elasticpop{
-	0%     {-webkit-transform:scale3d(1,1,1);}
-	/*5% 		 {-webkit-transform:scale3d(.8,.8,1);}*/
-	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
-	100%   {-webkit-transform:scale3d(1,1,1);}
-}
-@keyframes elasticpop{
-	0%     {-webkit-transform:scale3d(1,1,1);}
-	/*5% 		 {-webkit-transform:scale3d(.8,.8,1);}*/
-	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
-	100%   {-webkit-transform:scale3d(1,1,1);}
-}
-
-
-/* scoreboard */
-.gameboard{zoom:1;}
-.gameboard:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
-
-.currentscore,
-.recordscore{float:left;margin:.5em .5em .5em 0;padding:0 1em .5em;background:#baac9f;border-radius:8px}
-.currentscore h3,
-.recordscore h3{padding:.5em 0 0;margin:0;line-height:1.5;text-align:center;font-size:1em;color:#e8ded2;}
-
-.scorefigure{text-align:center;font-size:1.8em;color:#fff;}
-
-#gameover{display:none;position:fixed;z-index:9999;top:0;left:0;width:100%;height:100%;padding:2em 0 0;line-height:2em;text-align:center;background-color:rgba(200,200,200,.7);color:#fff;font-weight:800;}
-#gameover div{font-size:2em;}
-#gameover p{font-size:1em}
-
-@media screen and (max-width: 640px) {
-	.gogithub{display:none;}
-	#gameholder{width:320px;margin:0 auto;}
-	#gamepannel{display:none;}
-}
-</style>
-
-<div class="gogithub"><a href="https://github.com/balibell/js2048" target="_blank">Github</a></div>
-
-<div id="gameholder">
-	<div class="gameboard">
-		<div class="currentscore">
-			<h3>SCORE</h3>
-			<div id="gamescore" class="scorefigure">0</div>
-		</div>
-		
-		<div class="recordscore">
-			<h3>BEST</h3>
-			<div id="bestscore" class="scorefigure">0</div>
-		</div>
-	</div>
-	
-	
-	<div id="gamerange">
-		
-	</div>
-
-
-	<div id="gamepannel">
-		<a href="javascript:;" id="pannelup" data-dir="up">UP</a>
-		<a href="javascript:;" id="pannelright" data-dir="right">RIGHT</a>
-		<a href="javascript:;" id="panneldown" data-dir="down">DOWN</a>
-		<a href="javascript:;" id="pannelleft" data-dir="left">LEFT</a>
-	</div>
-
-</div>
-<div id="gameover"><div>Game over!</div> <p>Click to try again</p></div>
-
 <script>
-$(document).on('touchmove',function (e){
-	e.preventDefault();
-	e.stopPropagation();
-})
-
-
-$(function (){
-	var myQSB = new $.QSB('#gamerange',{"scoreboard":"#gamescore","bestscore":"#bestscore","gameover":"#gameover"})
-
-	$('#gamepannel').delegate('a','click',function (){
-		myQSB.move($(this).data('dir'))
-	})
-
-
-
-	$(window).keyup(function(e){
-		e.preventDefault();
-		e.stopPropagation();
-		switch(e.which){
-		case 37 : myQSB.move('left');break;
-		case 38 : myQSB.move('up');break;
-		case 39 : myQSB.move('right');break;
-		case 40 : myQSB.move('down');break;
-		}
-	})
-
-
-
-	$('#gamerange').swipeUp(function (e){
-		e.preventDefault();
-		e.stopPropagation();
-		myQSB.move('up')
-	})
-	.swipeDown(function (e){
-		e.preventDefault();
-		e.stopPropagation();
-		myQSB.move('down')
-	})
-	.swipeLeft(function (e){
-		e.preventDefault();
-		e.stopPropagation();
-		myQSB.move('left')
-	})
-	.swipeRight(function (e){
-		e.preventDefault();
-		e.stopPropagation();
-		myQSB.move('right')
-	})
-})
-
-
 /*
   @说明：QS 类chess
   */
@@ -220,6 +26,7 @@ $.QS.prototype = {
 		this.opts = $.extend({}, opts)
     var t = this;
     t.$dom = $($cont);
+
 
     t.number = opts.number,
     t.pos = opts.pos, // array
@@ -654,6 +461,206 @@ $.QSB.prototype = {
 	}
 
 }
+</script>
+<script>function aaa(s){
+/*merge start*/
+  if( typeof(console)==='object' && console.log ){
+    console.log(s)
+  }
+/*merge end*/
+}</script>
+
+<style>
+body,html{padding:0;margin:0;
+-moz-user-select: none;
+-khtml-user-select: none;
+user-select: none;
+font-size:13px;
+}
+
+.gogithub{padding:1em 0 0 1em;}
+.gogithub a:link,
+.gogithub a:visited{text-decoration:none;font-size:2em;color:#444}
+.gogithub a:hover{text-decoration:underline;color:#444}
+
+#gameholder{zoom:1;margin:2em 0 4em 6em;font-family:tahoma,arial,sans-serif;}
+#gameholder:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
+
+#gamepannel{position:relative;float:left;margin:6em 0 0 6em;}
+#gamepannel a{position:absolute;top:0;left:0;width:100px;height:40px;line-height:39px;text-align:center;background:blue;color:#fff;border-radius:8px;text-decoration:none !important;}
+#gamepannel a:link,
+#gamepannel a:visited{background:#22b4f6}
+#gamepannel a:hover{background:#1e9ed8}
+
+a#pannelup{left:100px;top:0;}
+a#pannelright{left:200px;top:40px;}
+a#panneldown{left:100px;top:80px;}
+a#pannelleft{left:0;top:40px;}
+
+#gamerange{border-radius:.5em;background-color:#baac9f}
+#gamerange div{text-align:center;font-weight:400;border-radius:8px}
+.qs-unit{z-index:1;line-height:1.5em;
+	transition: transform .1s ease-in-out;
+	-webkit-transition: -webkit-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
+	-moz-transition: -moz-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
+	-o-transition: -o-transform .1s ease-in-out, top .1s ease-in-out, left .1s ease-in-out;
+}
+.qs-unit-init{
+	-webkit-transform: scale3d(0,0,0);
+	-moz-transform: scale3d(0,0,0);
+	-o-transform: scale3d(0,0,0);
+	transform: scale3d(0,0,0);
+}
+.qs-unit-merge{
+	-webkit-animation-name:elasticpop;
+	-moz-animation-name:elasticpop;
+	animation-name:elasticpop;
+
+	-webkit-animation-duration:.2s;
+	-moz-animation-duration:.2s;
+	-ms-animation-duration:.2s;
+	-o-animation-duration:.2s;
+	animation-duration:.2s;
+
+
+	-webkit-animation-timing-function:ease;
+	-moz-animation-timing-function:ease;
+	animation-timing-function:ease;
+
+
+	-webkit-animation-iteration-count:1;
+	-moz-animation-iteration-count:1;
+	animation-iteration-count:1;
+}
+
+@-webkit-keyframes elasticpop{
+	0%     {-webkit-transform:scale3d(1,1,1);}
+	/*5% 		 {-webkit-transform:scale3d(.8,.8,1);}*/
+	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
+	100%   {-webkit-transform:scale3d(1,1,1);}
+}
+@-moz-keyframes elasticpop{
+	0%     {-webkit-transform:scale3d(1,1,1);}
+	/*5% 		 {-webkit-transform:scale3d(.8,.8,1);}*/
+	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
+	100%   {-webkit-transform:scale3d(1,1,1);}
+}
+@keyframes elasticpop{
+	0%     {-webkit-transform:scale3d(1,1,1);}
+	/*5% 		 {-webkit-transform:scale3d(.8,.8,1);}*/
+	45%    {-webkit-transform:scale3d(1.2,1.2,1);}
+	100%   {-webkit-transform:scale3d(1,1,1);}
+}
+
+
+/* scoreboard */
+.gameboard{zoom:1;}
+.gameboard:after{content:"\0020";display:block;height:0;overflow:hidden;clear:both;}
+
+.currentscore,
+.recordscore{float:left;margin:.5em .5em .5em 0;padding:0 1em .5em;background:#baac9f;border-radius:8px}
+.currentscore h3,
+.recordscore h3{padding:.5em 0 0;margin:0;line-height:1.5;text-align:center;font-size:1em;color:#e8ded2;}
+
+.scorefigure{text-align:center;font-size:1.8em;color:#fff;}
+
+#gameover{display:none;position:fixed;z-index:9999;top:0;left:0;width:100%;height:100%;padding:2em 0 0;line-height:2em;text-align:center;background-color:rgba(200,200,200,.7);color:#fff;font-weight:800;}
+#gameover div{font-size:2em;}
+#gameover p{font-size:1em}
+
+@media screen and (max-width: 640px) {
+	.gogithub{display:none;}
+	#gameholder{width:320px;margin:0 auto;}
+	#gamepannel{display:none;}
+}
+</style>
+</head>
+
+<body>
+<div class="gogithub"><a href="https://github.com/balibell/js2048" target="_blank">Github</a></div>
+
+<div id="gameholder">
+	<div class="gameboard">
+		<div class="currentscore">
+			<h3>SCORE</h3>
+			<div id="gamescore" class="scorefigure">0</div>
+		</div>
+		
+		<div class="recordscore">
+			<h3>BEST</h3>
+			<div id="bestscore" class="scorefigure">0</div>
+		</div>
+	</div>
+	
+	
+	<div id="gamerange">
+		
+	</div>
+
+
+	<div id="gamepannel">
+		<a href="javascript:;" id="pannelup" data-dir="up">UP</a>
+		<a href="javascript:;" id="pannelright" data-dir="right">RIGHT</a>
+		<a href="javascript:;" id="panneldown" data-dir="down">DOWN</a>
+		<a href="javascript:;" id="pannelleft" data-dir="left">LEFT</a>
+	</div>
+
+</div>
+<div id="gameover"><div>Game over!</div> <p>Click to try again</p></div>
+
+<script>
+$(document).on('touchmove',function (e){
+	e.preventDefault();
+	e.stopPropagation();
+})
+
+
+$(function (){
+	var myQSB = new $.QSB('#gamerange',{"scoreboard":"#gamescore","bestscore":"#bestscore","gameover":"#gameover"})
+
+	$('#gamepannel').delegate('a','click',function (){
+		myQSB.move($(this).data('dir'))
+	})
+
+
+
+	$(window).keyup(function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		switch(e.which){
+		case 37 : myQSB.move('left');break;
+		case 38 : myQSB.move('up');break;
+		case 39 : myQSB.move('right');break;
+		case 40 : myQSB.move('down');break;
+		}
+	})
+
+
+
+	$('#gamerange').swipeUp(function (e){
+		e.preventDefault();
+		e.stopPropagation();
+		myQSB.move('up')
+	})
+	.swipeDown(function (e){
+		e.preventDefault();
+		e.stopPropagation();
+		myQSB.move('down')
+	})
+	.swipeLeft(function (e){
+		e.preventDefault();
+		e.stopPropagation();
+		myQSB.move('left')
+	})
+	.swipeRight(function (e){
+		e.preventDefault();
+		e.stopPropagation();
+		myQSB.move('right')
+	})
+})
+
+
+
 
 
 
