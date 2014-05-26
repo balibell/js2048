@@ -380,7 +380,7 @@ $.QSB.prototype = {
 			if( hasmoved ){
 				window.setTimeout(function (){
 					t.generateQS();
-				},1.3*t.dura)
+				},t.dura)
 			}else{
 					// if no empty pos can be found, then judge whether game over or not
 				if( !t.randomPos() && t.isGameOver() ){
@@ -389,7 +389,7 @@ $.QSB.prototype = {
 			}
 			t.movtimer = window.setTimeout(function (){
 				t.ismoving--;
-			},1.5*t.dura)
+			},t.dura)
 		}
 
 		return hasmoved;
