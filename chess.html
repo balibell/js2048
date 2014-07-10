@@ -40,7 +40,8 @@ $.QS.prototype = {
     		"32":{"color":"#ffffff","size":3.5,"background":"#f57c5f"},
     		"64":{"color":"#ffffff","size":3.5,"background":"#f45e39"},
     		"128":{"color":"#ffffff","size":2.8,"background":"#eccc5f"},
-    		"1024":{"color":"#ffffff","size":2.2,"background":"#eccc5f"}
+    		"1024":{"color":"#ffffff","size":2.2,"background":"#eccc5f"},
+    		"4096":{"color":"#ffffff","size":2.0,"background":"#000"}
     }
 
     t.setDomAttr();
@@ -108,7 +109,9 @@ $.QS.prototype = {
 		var t = this,
 			grade = t.number;
 
-		if( t.number >= 1024  ){
+		if( t.number >= 4096 ){
+			grade = "4096"
+		}else if( t.number >= 1024  ){
 			grade = "1024"
 		}else if( t.number >= 128 ){
 			grade = "128"
@@ -174,6 +177,7 @@ $.QSB.prototype = {
     	t.diminfo.push(inn)
     }
 
+    t.generateQS([0,0],8192)
 
     // existed chesses on the qs board
     for(var i=0; i<t.initcout; i++){
@@ -216,11 +220,12 @@ $.QSB.prototype = {
 	generateQS : function (pos,number){
 		var t = this,
 			qs = null,
-			rpos = t.randomPos();
+			rpos = pos || t.randomPos(),
+			rnumber = number || t.randomNumber();
 
 		if( rpos ){
   		var info = t.diminfo[rpos[0]][rpos[1]];
-    	var qs = new $.QS($('<div class="qs-unit qs-unit-init"></div>'),{number:t.randomNumber(),pos:rpos,qssize:t.qssize,gap:t.gap});
+    	var qs = new $.QS($('<div class="qs-unit qs-unit-init"></div>'),{number:rnumber,pos:rpos,qssize:t.qssize,gap:t.gap});
     	info.qs = qs;
 
     	t.$dom.append(qs.$dom);
@@ -381,17 +386,21 @@ $.QSB.prototype = {
 				window.setTimeout(function (){
 					t.generateQS();
 				},t.dura)
+
+				t.movtimer = window.setTimeout(function (){
+					t.ismoving--;
+				},t.dura)
 			}else{
+				t.ismoving--;
 					// if no empty pos can be found, then judge whether game over or not
 				if( !t.randomPos() && t.isGameOver() ){
 					t.gameOver()
 				}
 			}
-			t.movtimer = window.setTimeout(function (){
-				t.ismoving--;
-			},t.dura)
+			
 		}
 
+		t.lastmove = dir;
 		return hasmoved;
 	},
 	getSavedScore : function (){
@@ -622,6 +631,8 @@ $(function (){
 		myQSB.move($(this).data('dir'))
 	})
 
+	window.qsb = myQSB;
+
 
 
 	$(window).keyup(function(e){
@@ -665,6 +676,10 @@ $(function (){
 
 
 </script>
+
+
+<script src="robot.js" ></script>
+
 </body>
 </html>
 
